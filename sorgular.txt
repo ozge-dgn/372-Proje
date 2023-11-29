@@ -152,4 +152,32 @@ FROM (
 LEFT JOIN KurumGiderleri kg ON all_months.month_start = DATE_FORMAT(kg.tarih, '%Y-%m-01')
 GROUP BY all_months.month_start
 ORDER BY all_months.month_start;
-
+SELECT  -- haftalık rapor
+  all_weeks.week_start,
+  all_weeks.week_end,
+  COALESCE(SUM(kg.tutar), 0) AS total_tutar
+FROM (
+  SELECT 
+    start_of_week AS week_start,
+    DATE_ADD(start_of_week, INTERVAL 6 DAY) AS week_end
+  FROM (
+    SELECT 
+      MIN(tarih) AS start_of_week
+    FROM KurumGiderleri
+    
+    GROUP BY YEAR(tarih), MONTH(tarih), FLOOR(DAY(tarih) / 7)
+  ) Weeks
+  UNION ALL
+  SELECT 
+    DATE_ADD(MAX(week_start), INTERVAL 7 DAY) AS week_start,
+    DATE_ADD(MAX(DATE_ADD(week_start, INTERVAL 6 DAY)), INTERVAL 7 DAY) AS week_end
+  FROM (
+    SELECT 
+      MIN(tarih) AS week_start
+    FROM KurumGiderleri
+    GROUP BY YEAR(tarih), MONTH(tarih), FLOOR(DAY(tarih) / 7)
+  ) Weeks
+) all_weeks
+LEFT JOIN KurumGiderleri kg ON all_weeks.week_start <= kg.tarih AND kg.tarih <= all_weeks.week_end 
+GROUP BY all_weeks.week_start, all_weeks.week_end 
+ORDER BY all_weeks.week_start;
