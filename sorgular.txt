@@ -112,21 +112,26 @@ Personelin personel_id'sine göre müsaitlik durumu:
 	JOIN PartTimeMüsaitlikDurumu pm ON p.personel_id = pm.personel_id
 	JOIN MüsaitSaatler ms ON pm.saat_id = ms.id
 	WHERE p.personel_id  = 682; 
+
 SELECT -- Girilen personelin türünü getiriyor
+  p.personel_id,
   p.ad, 
   p.soyad,
   CASE
     WHEN ip.personel_id IS NOT NULL THEN 'İdari Personel'
     WHEN tp.personel_id IS NOT NULL THEN 'Temizlik Personeli'
     WHEN og.personel_id IS NOT NULL THEN 'Öğretmen'
+    ELSE 'Bunlar dışında personel olamaz!'
+  END AS personel_türü,
+  CASE
     WHEN ft.personel_id IS NOT NULL THEN 'Full Time Çalışan'
     WHEN pt.personel_id IS NOT NULL THEN 'Part Time Çalışan'
-    ELSE 'Bunlar dışında personel olamaz!'
-  END AS personel_türü
+    ELSE 'Çalışan türü full time veya part time olmalıdır'
+  END AS çalışan_türü
 FROM Personel p
 LEFT JOIN İdariPersonel ip ON p.personel_id = ip.personel_id
-LEFT JOIN TemizlikPersoneli tp ON p.personel_id = tp.personel_id
+LEFT JOIN TemizlikPersoneli tp ON p.personel_id = tp.personel_id 
 LEFT JOIN Öğretmen og ON p.personel_id = og.personel_id
 LEFT JOIN FullTimeÇalışan ft ON p.personel_id = ft.personel_id
 LEFT JOIN PartTimeÇalışan pt ON p.personel_id = pt.personel_id
-WHERE p.personel_id = 501; 
+WHERE p.personel_id = 501;
