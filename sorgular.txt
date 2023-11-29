@@ -100,9 +100,15 @@ stok miktarı 10000'den küçük olan stoklar için bir uyarı mesajı döndüre
 	JOIN		
 	Stok stok ON kullanır.stok_id = stok.stok_id;	
 
-Öğrencinin ID'sine göre müsaitlik durumu:
+Öğrencinin okul_no'suna göre müsaitlik durumu:
 	SELECT m.gün, ms.saat
 	FROM Öğrenci o
 	JOIN ÖğrenciMüsaitlikDurumu m ON o.okul_no = m.okul_no
 	JOIN MüsaitSaatler ms ON m.saat_id = ms.id
 	WHERE o.okul_no  = 1; 
+Personelin personel_id'sine göre müsaitlik durumu:
+	SELECT pm.gün, ms.saat
+	FROM Personel p
+	JOIN PartTimeMüsaitlikDurumu pm ON p.personel_id = pm.personel_id
+	JOIN MüsaitSaatler ms ON pm.saat_id = ms.id
+	WHERE p.personel_id  = 682; 
